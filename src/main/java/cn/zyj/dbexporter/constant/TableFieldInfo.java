@@ -2,6 +2,7 @@ package cn.zyj.dbexporter.constant;
 
 import com.google.common.collect.ImmutableSet;
 import lombok.Getter;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.TableField;
 
@@ -11,9 +12,9 @@ import java.util.Optional;
 /**
  * 字段信息
  */
-public interface  TableFieldInfo<T> {
+public interface TableFieldInfo<T> {
 
-    ImmutableSet<TableField> getTableFields();
+    ImmutableSet<Field> getTableFields();
 
     default String getNameText() {
         return getTableFields().stream().findAny()
@@ -22,6 +23,7 @@ public interface  TableFieldInfo<T> {
     }
 
     default String getValueText(T value, ToTextPurpose purpose) {
+        if (value == null) return "";
         return value + "";
     }
 

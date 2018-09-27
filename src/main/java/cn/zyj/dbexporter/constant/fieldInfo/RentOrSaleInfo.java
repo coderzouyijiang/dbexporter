@@ -1,21 +1,24 @@
-package cn.zyj.dbexporter.constant;
+package cn.zyj.dbexporter.constant.fieldInfo;
 
+import cn.zyj.dbexporter.constant.TableFieldInfo;
+import cn.zyj.dbexporter.constant.ToTextPurpose;
 import com.google.common.collect.ImmutableSet;
-import org.jooq.Record;
+import org.jooq.Field;
 import org.jooq.TableField;
+import org.jooq.types.UByte;
 
+import java.rmi.server.ExportException;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static cn.zyj.dbexporter.constant.ToTextPurpose.*;
-import static cn.zyj.dbexporter.constant.RentOrSaleEnum.*;
+import static cn.zyj.dbexporter.constant.enums.RentOrSaleEnum.*;
 import static cn.zyj.dbexporter.jooq.Tables.*;
 
-public class RentOrSaleInfo implements TableFieldInfo<Short> {
+public class RentOrSaleInfo implements TableFieldInfo<UByte> {
 
     @Override
-    public ImmutableSet<TableField> getTableFields() {
+    public ImmutableSet<Field> getTableFields() {
         Set<TableField> tableFields = new HashSet<>();
         tableFields.add(T_RESOURCE.RENT_OR_SALE);
         tableFields.add(T_CALCULATOR.RENT_OR_SALE);
@@ -23,7 +26,13 @@ public class RentOrSaleInfo implements TableFieldInfo<Short> {
     }
 
     @Override
-    public String getValueText(Short value, ToTextPurpose purpose) {
+    public String getValueText(UByte value, ToTextPurpose purpose) {
+        if (value == null) {
+            return "";
+        }
+        if (purpose == EXPORT) {
+            return value + "";
+        }
         if (value == RENT.getValue()) {
             return "租赁";
         } else if (value == SALE.getValue()) {

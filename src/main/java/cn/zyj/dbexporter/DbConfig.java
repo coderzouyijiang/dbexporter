@@ -3,10 +3,15 @@ package cn.zyj.dbexporter;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
+import org.jooq.ExecuteContext;
 import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+import org.jooq.impl.DefaultConfiguration;
+import org.jooq.impl.DefaultExecuteListener;
+import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +27,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 @Configuration
-public class DbConfig{
+@Slf4j
+public class DbConfig {
 
     @Bean("hikariConfig")
     Properties hikariConfig() throws IOException {
@@ -50,9 +56,14 @@ public class DbConfig{
     }
 
     @Bean
-    DSLContext dsl(@Qualifier("dataSource") DataSource dataSource){
+    DSLContext dsl(@Qualifier("dataSource") DataSource dataSource, @Autowired SqlExcuteListener listener) {
         Settings settings = new Settings();
-        DSLContext dsl = DSL.using(dataSource, SQLDialect.MYSQL_5_7, settings);
+        DefaultConfiguration dslConfig = new DefaultConfiguration();
+        dslConfig.set(dataSource)
+                .set(SQLDialect.MYSQL_5_7)
+                .set(settings);
+        dslConfig.set(new DefaultExecuteListenerProvider(listener));
+        DSLContext dsl = DSL.using(dslConfig);
         return dsl;
     }
 
