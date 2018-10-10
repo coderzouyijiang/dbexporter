@@ -67,6 +67,7 @@ public class NetUtil {
         //by security policy, you must connect through a fowarded port
         int portForwardingL = session.setPortForwardingL(localPort, remoteHost, remotePort);
         log.info("portForwardingL:{}", portForwardingL);
+
         return session;
     }
 

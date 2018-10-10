@@ -39,6 +39,9 @@ public class DbConfig {
     @Value("${hikari.profile:}")
     String hikariProfile;
 
+    @Value("${hikari.use-ssh:false}")
+    Boolean hikariUseSSH;
+
     @Bean("hikariConfig")
     Properties hikariConfig() throws IOException {
         Properties prop = new Properties();
@@ -48,7 +51,7 @@ public class DbConfig {
         InputStream inputStream = DbConfig.class.getClassLoader().getResourceAsStream(fileName);
         prop.load(inputStream);
         // 连接本地以外的数据库，都使用ssh
-        if (postFix.lastIndexOf("local") == -1) {
+        if (hikariUseSSH != null && hikariUseSSH) {
             String jdbcUrl = prop.getProperty("jdbcUrl");
             String newJdbcUrl = NetUtil.getJdbcUrlBySSH(jdbcUrl, 3306);
             prop.setProperty("jdbcUrl", newJdbcUrl);
