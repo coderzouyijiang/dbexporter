@@ -80,31 +80,4 @@ public class NetUtil {
         return hostAndIp;
     }
 
-    public static String getJdbcUrlBySSH(String url, int defaultPort) {
-        log.info("oldUrl:" + url);
-        // jdbcUrl=jdbc:mysql://10.172.216.113:3306/db_calculator?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10
-        // jdbcUrl=jdbc:mysql://127.0.0.1:3307/db_calculator?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10
-
-        String sshHost = "fortress.edianzu.cn";
-        int sshPort = 22;
-        String sshUsr = "zouyijiang";
-        String sshPwd = "JPumpBicG9lUlZq8";
-
-        String hostAndIp = getHostAndIpFromUrl(url);
-        String[] hostAndIpArr = hostAndIp.split(":");
-        assert hostAndIpArr.length > 0;
-        String remoteHost = hostAndIpArr[0];
-        int remotePort = hostAndIpArr.length > 1 ? Integer.valueOf(hostAndIpArr[1]) : defaultPort;
-
-        int localPort = findAvailableLocalPort();
-        assert localPort != -1;
-        try {
-            connectBySSH(localPort, remoteHost, remotePort, sshHost, sshPort, sshUsr, sshPwd);
-        } catch (Exception e) {
-            throw new RuntimeException("connectBySSH", e);
-        }
-        String newUrl = url.replaceFirst(hostAndIp, "127.0.0.1" + ":" + localPort);
-        log.info("newUrl:" + newUrl);
-        return newUrl;
-    }
 }
