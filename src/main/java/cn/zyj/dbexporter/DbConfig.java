@@ -1,8 +1,10 @@
 package cn.zyj.dbexporter;
 
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.ExecuteContext;
@@ -15,6 +17,7 @@ import org.jooq.impl.DefaultExecuteListenerProvider;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySources;
@@ -24,17 +27,32 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.Properties;
 
 @Configuration
 @Slf4j
 public class DbConfig {
 
+    @Value("${hikari.profile:}")
+    String hikariProfile;
+
     @Bean("hikariConfig")
     Properties hikariConfig() throws IOException {
         Properties prop = new Properties();
-        InputStream inputStream = DbConfig.class.getClassLoader().getResourceAsStream("hikari.properties");
+        String postFix = hikariProfile.trim().isEmpty() ? "" : ("-" + hikariProfile);
+        String fileName = String.format("hikari%s.properties", postFix);
+        log.info("hikariConfigFileName:" + fileName);
+        InputStream inputStream = DbConfig.class.getClassLoader().getResourceAsStream(fileName);
         prop.load(inputStream);
+        // 连接本地以外的数据库，都使用ssh
+        if (postFix.lastIndexOf("local") == -1) {
+            String jdbcUrl = prop.getProperty("jdbcUrl");
+            String newJdbcUrl = NetUtil.getJdbcUrlBySSH(jdbcUrl, 3306);
+            prop.setProperty("jdbcUrl", newJdbcUrl);
+        }
         return prop;
     }
 
