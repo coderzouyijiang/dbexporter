@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.zyj.dbexporter.mybatis.dao.DCustomerMemberDao">
+
+    <sql id="getCustomerMembers">
+        select cmi.id,ca.id as account_id,ca.phone,cmi.remark_name
+        ,date_format(cmi.handle_time,'%Y-%m-%d %H:%i:%s') as join_time
+        ,if(ca.customer_id=cmi.group_customer_id,1,cmi.`status`) as `status`
+        ,if(ca.`status`=1,1,0) as enable
+        ,cmi.fail_code
+        from t_customer_member_invite as cmi
+        join t_customer_account as ca on ca.old_customer_id=cmi.customer_id and ca.`status`!=2
+        and (ca.customer_id=cmi.group_customer_id or ca.customer_id=ca.old_customer_id)
+        where cmi.data_status=0
+    </sql>
+    <sql id="getCustomerMembersWhere">
+        <where>
+            <if test="phone!=null">
+                and t.phone like concat('%',#{phone},'%')
+            </if>
+            <if test="remarkName!=null">
+                and not isnull(t.remark_name) and t.remark_name like concat('%',#{remarkName},'%')
+            </if>
+            <if test="minJoinTime!=null">
+                and ( isnull(t.join_time) or str_to_date(t.join_time,'%Y-%m-%d %H:%i:%s') >=
+                str_to_date(#{minJoinTime},'%Y-%m-%d %H:%i:%s') )
+            </if>
+            <if test="maxJoinTime!=null">
+                and ( isnull(t.join_time) or str_to_date(t.join_time,'%Y-%m-%d %H:%i:%s') &lt;=
+                str_to_date(#{maxJoinTime},'%Y-%m-%d %H:%i:%s') )
+            </if>
+        </where>
+    </sql>
+
+    <select id="getCustomerMembers" resultType="cn.zyj.dbexporter.mybatis.model.CustomerMember">
+        <include refid="getCustomerMembers"></include>
+        and cmi.group_customer_id=#{groupCustomerId}
+        order by cmi.handle_time desc
+    </select>
+
+    <select id="getCustomerMember" resultType="cn.zyj.dbexporter.mybatis.model.CustomerMember">
+        <include refid="getCustomerMembers"></include>
+        and cmi.group_customer_id=#{groupCustomerId}
+        and cmi.customer_id=#{customerId}
+        order by cmi.handle_time desc
+    </select>
+
+    <select id="getCustomerMemberByAccountId" resultType="cn.zyj.dbexporter.mybatis.model.CustomerMember">
+        <include refid="getCustomerMembers"></include>
+        and ca.id=#{accountId}
+    </select>
+
+    <select id="getCustomerMemberTotalCount" resultType="int"
+            parameterType="cn.zyj.dbexporter.mybatis.model.CustomerMemberDTO">
+        select count(1) from (
+        <include refid="getCustomerMembers"></include>
+        and cmi.group_customer_id=#{groupCustomerId}
+        ) as t
+        <include refid="getCustomerMembersWhere"></include>
+    </select>
+
+    <select id="getCustomerMemberPage" resultType="cn.zyj.dbexporter.mybatis.model.CustomerMember"
+            parameterType="cn.zyj.dbexporter.mybatis.model.CustomerMemberDTO">
+        select t.* from (
+        <include refid="getCustomerMembers"></include>
+        and cmi.group_customer_id=#{groupCustomerId}
+        ) as t
+        <include refid="getCustomerMembersWhere"></include>
+        <if test="orderBy!=null and order!=null">
+            order by `${orderBy}` ${order}
+        </if>
+        <if test="pageIndex!=null and pageSize!=null">
+            limit ${pageIndex},${pageSize}
+        </if>
+    </select>
+
+    <select id="getCustomerMemberById" resultType="cn.zyj.dbexporter.mybatis.model.CustomerMember">
+        <include refid="getCustomerMembers"></include>
+        and cmi.id=#{inviteId}
+    </select>
+
+    <sql id="getInvite">
+        select cmi.id,cmi.remark_name
+        ,date_format(cmi.cdate,'%Y-%m-%d %H:%i:%s') as invite_time
+        ,c.`company_name`,c.true_name as inviter_name
+        from t_customer_member_invite cmi
+        join t_customer c on c.id=cmi.group_customer_id
+        where cmi.data_status=0
+    </sql>
+
+    <select id="getInviteMsgById" resultType="cn.zyj.dbexporter.mybatis.model.CustomerMemberInviteMsg">
+        <include refid="getInvite"></include>
+        and cmi.id=#{inviteId}
+    </select>
+
+    <select id="getInviteMsg" resultType="cn.zyj.dbexporter.mybatis.model.CustomerMemberInviteMsg">
+        <include refid="getInvite"></include>
+        and cmi.group_customer_id=#{groupCustomerId}
+        and cmi.customer_id=#{customerId}
+    </select>
+
+    <insert id="saveInvite" useGeneratedKeys="true" keyProperty="id"
+            parameterType="cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite">
+        insert into t_customer_member_invite(
+        group_customer_id
+        ,customer_id
+        <if test="remarkName!=null">
+            ,remark_name
+        </if>
+        <if test="type!=null">
+            ,`type`
+        </if>
+        <if test="status!=null">
+            ,`status`
+        </if>
+        <if test="failCode!=null">
+            ,fail_code
+        </if>
+        <if test="handleTime!=null">
+            ,handle_time
+        </if>
+        ) values (
+        ,#{groupCustomerId}
+        ,#{customerId}
+        <if test="remarkName!=null">
+            ,#{remarkName}
+        </if>
+        <if test="type!=null">
+            ,#{type}
+        </if>
+        <if test="status!=null">
+            ,#{status}
+        </if>
+        <if test="failCode!=null">
+            ,#{failCode}
+        </if>
+        <if test="handleTime!=null">
+            ,#{handleTime}
+        </if>
+        )
+    </insert>
+
+    <update id="updateInvite" parameterType="cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite">
+        update t_customer_member_invite
+        <set>
+            <if test="remarkName!=null">
+                ,remark_name=#{remarkName}
+            </if>
+            <if test="type!=null">
+                ,`type`=#{type}
+            </if>
+            <if test="status!=null">
+                ,`status`=#{status}
+            </if>
+            <if test="dataStatus!=null">
+                ,`data_status`=#{dataStatus}
+            </if>
+            <if test="failCode!=null">
+                ,fail_code=#{failCode}
+            </if>
+            <if test="handleTime!=null">
+                ,handle_time=#{handleTime}
+            </if>
+        </set>
+        <where>
+            <choose>
+                <when test="id!=null">
+                    and id=#{id}
+                </when>
+                <when test="groupCustomerId!=null and customerId!=null">
+                    and group_customer_id=#{groupCustomerId}
+                    and customer_id=#{customerId}
+                </when>
+                <otherwise>
+                    and 1=0
+                </otherwise>
+            </choose>
+        </where>
+    </update>
+
+    <sql id="allFields">
+      id,customer_id,group_customer_id,`type`,`status`,`data_status`,
+      remark_name,fail_code,
+      date_format(handle_time,'%Y-%m-%d %H:%i:%s') as handle_time,
+      date_format(cdate,'%Y-%m-%d %H:%i:%s') as cdate,
+      date_format(mdate,'%Y-%m-%d %H:%i:%s') as mdate
+    </sql>
+
+    <select id="getInviteById" resultType="cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite">
+        select *
+        from t_customer_member_invite
+        where id=#{id}
+    </select>
+
+    <select id="getInvites" parameterType="cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite"
+            resultType="cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite">
+        select *
+        from t_customer_member_invite
+        <where>
+            <if test="groupCustomerId!=null">
+                and group_customer_id=#{groupCustomerId}
+            </if>
+            <if test="customerId!=null">
+                and customer_id=#{customerId}
+            </if>
+            <if test="remarkName!=null">
+                and remark_name=#{remarkName}
+            </if>
+            <if test="type!=null">
+                and `type`=#{type}
+            </if>
+            <if test="status!=null">
+                and `status`=#{status}
+            </if>
+            <if test="dataStatus!=null">
+                and `data_status`=#{dataStatus}
+            </if>
+            <if test="failCode!=null">
+                and fail_code=#{failCode}
+            </if>
+            <if test="handleTime!=null">
+                and handleTime=#{handleTime}
+            </if>
+        </where>
+    </select>
+
+    <update id="deleteInviteById">
+        update t_customer_member_invite
+        set data_status=1
+        where id=#{id}
+    </update>
+</mapper>
