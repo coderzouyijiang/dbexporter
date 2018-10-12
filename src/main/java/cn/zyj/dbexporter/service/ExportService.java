@@ -1,4 +1,4 @@
-package cn.zyj.dbexporter;
+package cn.zyj.dbexporter.service;
 
 import cn.zyj.dbexporter.constant.TableFieldInfo;
 import cn.zyj.dbexporter.constant.TableFieldInfos;
@@ -16,10 +16,7 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,6 +37,18 @@ public class ExportService {
      * @throws IOException
      */
     public void exportExcelForTResource(String fileName) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(fileName)) {
+            exportExcelForTResource(fos);
+        }
+    }
+
+    /**
+     * 导出资源池
+     *
+     * @param os
+     * @throws IOException
+     */
+    public void exportExcelForTResource(OutputStream os) throws IOException {
         SelectSeekStep1<TResourceRecord, Timestamp> sql = dsl
                 .selectFrom(T_RESOURCE)
                 .where(T_RESOURCE.DATA_STATUS.eq(0))
@@ -47,9 +56,7 @@ public class ExportService {
         Cursor<TResourceRecord> cursor = sql.fetchLazy();
 
         HSSFWorkbook workbook = createExcel(Arrays.asList(T_RESOURCE.fields()), cursor);
-        FileOutputStream fos = new FileOutputStream(fileName);
-        workbook.write(fos);
-        fos.close();
+        workbook.write(os);
     }
 
     /**

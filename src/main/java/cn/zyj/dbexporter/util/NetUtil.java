@@ -1,4 +1,4 @@
-package cn.zyj.dbexporter;
+package cn.zyj.dbexporter.util;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
@@ -47,28 +47,6 @@ public class NetUtil {
             port++;
         }
         return -1;
-    }
-
-    public static Session connectBySSH(int localPort, String remoteHost, int remotePort, String sshHost, int sshPort, String sshUsr, String sshPwd) throws Exception {
-        JSch jsch = new JSch();
-//        ssh zouyijiang@fortress.edianzu.cn
-//                JPumpBicG9lUlZq8
-        // stage
-//        mysql -h10.44.63.143 -umall -p
-//        密码：cm1ZwY0MrMZSoUvcowr5
-        Session session = jsch.getSession(sshUsr, sshHost, sshPort);
-        session.setPassword(sshPwd);
-
-        Properties config = new Properties();
-        config.put("StrictHostKeyChecking", "no");
-        session.setConfig(config);
-        session.connect(); //ssh connection established!
-
-        //by security policy, you must connect through a fowarded port
-        int portForwardingL = session.setPortForwardingL(localPort, remoteHost, remotePort);
-        log.info("portForwardingL:{}", portForwardingL);
-
-        return session;
     }
 
     public static String getHostAndIpFromUrl(String urlStr) {

@@ -17,6 +17,5 @@ public class SqlExcuteListener extends DefaultExecuteListener {
     @Override
     public void executeEnd(ExecuteContext ctx) {
         log.info("result:{}",ctx.result());
-
     }
 }

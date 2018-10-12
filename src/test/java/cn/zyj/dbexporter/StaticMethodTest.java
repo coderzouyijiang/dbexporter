@@ -1,14 +1,13 @@
 package cn.zyj.dbexporter;
 
+import cn.zyj.dbexporter.util.NetUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 
 @Slf4j
 @RunWith(JUnit4.class)
