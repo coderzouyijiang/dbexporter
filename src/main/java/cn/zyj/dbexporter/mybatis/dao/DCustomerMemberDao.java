@@ -34,7 +34,7 @@ public interface DCustomerMemberDao {
 
     Integer updateInvite(CustomerMemberInvite invite);
 
-    Integer getInviteById(@Param("id") Long id);
+    CustomerMemberInvite getInviteById(@Param("id") Long id);
 
     List<CustomerMemberInvite> getInvites(CustomerMemberInvite invite);
 

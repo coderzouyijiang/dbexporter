@@ -13,6 +13,7 @@ import org.jooq.types.UByte;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ImportResource;
 
 import java.io.*;
 import java.sql.Timestamp;
@@ -29,6 +30,4 @@ public class DbexporterApplication {
         ConfigurableApplicationContext ctx = SpringApplication.run(DbexporterApplication.class, args);
     }
 
-
-
-    }
+}

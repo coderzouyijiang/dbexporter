@@ -2,6 +2,7 @@ package cn.zyj.dbexporter;
 
 import cn.zyj.dbexporter.mybatis.dao.DCustomerMemberDao;
 import cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite;
+import cn.zyj.dbexporter.util.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -19,21 +20,27 @@ import static cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite.*;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {DbexporterApplication.class})
-public class MyBatisTest {
+public class CustomerMemberDaoTest {
 
     @Autowired
     DCustomerMemberDao customerMemberDao;
 
     @Autowired
-    ObjectMapper objectMapper;
+    JsonUtil jsonUtil;
 
     @Test
-    public void getInvites() throws JsonProcessingException {
+    public void getInvites() {
         CustomerMemberInvite invite = new CustomerMemberInvite();
         invite.setDataStatus(DATA_NORMAL);
         List<CustomerMemberInvite> invites = customerMemberDao.getInvites(invite);
 //        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        log.info("invites:{}", objectMapper.writeValueAsString(invites));
+        log.error("invites:{}", jsonUtil.toString(invites));
+    }
+
+    @Test
+    public void getInviteById() {
+        CustomerMemberInvite invite = customerMemberDao.getInviteById(3L);
+        log.error("invite:{}", jsonUtil.toString(invite));
     }
 
     @Test
@@ -46,7 +53,7 @@ public class MyBatisTest {
         invite.setStatus(STATUS_SUCCESS);
         invite.setHandleTime(new Date());
         Integer save = customerMemberDao.saveInvite(invite);
-        log.info("saveInvite:{},id={}", save, invite.getId());
+        log.error("saveInvite:{},id={}", save, invite.getId());
     }
 
 }

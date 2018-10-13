@@ -1,5 +1,9 @@
 package cn.zyj.dbexporter.config;
 
+import org.apache.ibatis.logging.log4j.Log4jImpl;
+import org.apache.ibatis.logging.slf4j.Slf4jImpl;
+import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
+import org.apache.ibatis.session.ExecutorType;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +29,12 @@ public class MyBatisConfig {
         Resource[] resources = context.getResources("classpath*:mapper/**/*.xml");
         bean.setMapperLocations(resources);
         org.apache.ibatis.session.Configuration config = new org.apache.ibatis.session.Configuration();
+//        http://www.mybatis.org/mybatis-3/zh/configuration.html#settings
         config.setMapUnderscoreToCamelCase(true);
+        config.setDefaultExecutorType(ExecutorType.REUSE);
+        config.setAutoMappingUnknownColumnBehavior(AutoMappingUnknownColumnBehavior.WARNING);
+        config.setUseGeneratedKeys(true);
+        config.setLogImpl(Slf4jImpl.class);
         bean.setConfiguration(config);
         return bean;
     }
