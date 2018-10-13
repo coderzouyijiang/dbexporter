@@ -47,7 +47,7 @@ public class DbConfig {
                             @Autowired(required = false) JschHolder jschHolder) throws IOException {
         Properties prop = new Properties();
         String postFix = hikariProfile.trim().isEmpty() ? "" : ("-" + hikariProfile);
-        String filePath = String.format("classpath:hikari%s.properties", postFix);
+        String filePath = String.format("classpath:db/hikari%s.properties", postFix);
         log.info("hikariConfigFileName:" + filePath);
         Resource resource = context.getResource(filePath);
         prop.load(resource.getInputStream());
