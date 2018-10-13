@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -36,18 +38,15 @@ public class DbConfig {
     @Value("${hikari.use-ssh:false}")
     Boolean hikariUseSSH;
 
-    @Bean("hikariConfig")
-    Properties hikariConfig() {
+    @Bean
+    Properties hikariConfig(@Autowired ApplicationContext context) throws IOException {
         Properties prop = new Properties();
         String postFix = hikariProfile.trim().isEmpty() ? "" : ("-" + hikariProfile);
-        String fileName = String.format("hikari%s.properties", postFix);
-        log.info("hikariConfigFileName:" + fileName);
-        try {
-            InputStream inputStream = DbConfig.class.getClassLoader().getResourceAsStream(fileName);
-            prop.load(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException("hikariConfig", e);
-        }
+        String filePath = String.format("classpath:hikari%s.properties", postFix);
+        log.info("hikariConfigFileName:" + filePath);
+        Resource resource = context.getResource(filePath);
+        prop.load(resource.getInputStream());
+
         // 连接本地以外的数据库，都使用ssh
         if (hikariUseSSH != null && hikariUseSSH) {
             String jdbcUrl = prop.getProperty("jdbcUrl");
@@ -72,6 +71,13 @@ public class DbConfig {
 
         HikariDataSource dataSource = new HikariDataSource(config);
         return dataSource;
+    }
+
+    @Bean
+    DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DataSource dataSource) {
+        DataSourceTransactionManager manager = new DataSourceTransactionManager();
+        manager.setDataSource(dataSource);
+        return manager;
     }
 
     @Bean
