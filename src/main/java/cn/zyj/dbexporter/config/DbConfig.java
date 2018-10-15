@@ -55,7 +55,15 @@ public class DbConfig {
         // 连接本地以外的数据库，都使用ssh
         if (jschHolder != null) {
             String jdbcUrl = prop.getProperty("jdbcUrl");
-            String newJdbcUrl = jschHolder.getJdbcUrlBySsh(jdbcUrl, 3306);
+//            根据jdbcUrl获取数据库ip和port，生成通过跳板机ssh连接数据库的jdbcUrl
+            String hostAndIp = NetUtil.getHostAndIpFromUrl(jdbcUrl);
+            String[] hostAndIpArr = hostAndIp.split(":");
+            assert hostAndIpArr.length > 0;
+            String remoteHost = hostAndIpArr[0];
+            int remotePort = hostAndIpArr.length > 1 ? Integer.valueOf(hostAndIpArr[1]) : 3306;
+            int localPort = jschHolder.createForwardingPort(remoteHost, remotePort);
+            String newJdbcUrl = jdbcUrl.replaceFirst(hostAndIp, "127.0.0.1" + ":" + localPort);
+            log.info("newJdbcUrl:" + newJdbcUrl);
             prop.setProperty("jdbcUrl", newJdbcUrl);
         }
         return prop;

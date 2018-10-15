@@ -19,7 +19,7 @@ public interface DCustomerMemberDao {
 
     CustomerMember getCustomerMemberByAccountId(@Param("accountId") Long accountId);
 
-    Integer getCustomerMemberTotalCount(CustomerMemberDTO dto);
+    long getCustomerMemberTotalCount(CustomerMemberDTO dto);
 
     List<CustomerMember> getCustomerMemberPage(CustomerMemberDTO dto);
 
@@ -30,13 +30,13 @@ public interface DCustomerMemberDao {
     CustomerMemberInviteMsg getInviteMsg(@Param("groupCustomerId") Long groupCustomerId,
                                          @Param("customerId") Long customerId);
 
-    Integer saveInvite(CustomerMemberInvite invite);
+    long saveInvite(CustomerMemberInvite invite);
 
-    Integer updateInvite(CustomerMemberInvite invite);
+    long updateInvite(CustomerMemberInvite invite);
 
     CustomerMemberInvite getInviteById(@Param("id") Long id);
 
     List<CustomerMemberInvite> getInvites(CustomerMemberInvite invite);
 
-    Integer deleteInviteById(@Param("id") Long id);
+    long deleteInviteById(@Param("id") Long id);
 }

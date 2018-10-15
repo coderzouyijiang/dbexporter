@@ -49,40 +49,18 @@ public class JschHolder {
 //        log.info("portForwardingL:{}", portForwardingL);
     }
 
-    /**
-     * 根据jdbcUrl获取数据库ip和port，生成通过跳板机ssh连接数据库的jdbcUrl
-     *
-     * @param url         原jdbcUrl
-     * @param defaultPort 数据库的默认端口号，如果url中没有，就用这个
-     * @return
-     */
-    public String getJdbcUrlBySsh(String url, int defaultPort) {
-        log.info("oldUrl:" + url);
-        // jdbcUrl=jdbc:mysql://10.172.216.113:3306/db_calculator?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10
-        // jdbcUrl=jdbc:mysql://127.0.0.1:3307/db_calculator?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10
-/*
-        String sshHost = "fortress.edianzu.cn";
-        int sshPort = 22;
-        String sshUsr = "zouyijiang";
-        String sshPwd = "JPumpBicG9lUlZq8";
-*/
-        String hostAndIp = NetUtil.getHostAndIpFromUrl(url);
-        String[] hostAndIpArr = hostAndIp.split(":");
-        assert hostAndIpArr.length > 0;
-        String remoteHost = hostAndIpArr[0];
-        int remotePort = hostAndIpArr.length > 1 ? Integer.valueOf(hostAndIpArr[1]) : defaultPort;
-
+    public int createForwardingPort(String remoteHost, int port) {
         int localPort = NetUtil.findAvailableLocalPort();
-        assert localPort != -1;
-        try {
-//            NetUtil.connectBySSH(localPort, remoteHost, remotePort, sshHost, sshPort, sshUsr, sshPwd);
-            int portForwardingL = this.session.setPortForwardingL(localPort, remoteHost, remotePort);
-            log.info("portForwardingL:{}", portForwardingL);
-        } catch (Exception e) {
-            throw new RuntimeException("getJdbcUrlBySSH", e);
+        if (localPort == -1) {
+            throw new RuntimeException("建立erp通道失败");
         }
-        String newUrl = url.replaceFirst(hostAndIp, "127.0.0.1" + ":" + localPort);
-        log.info("newUrl:" + newUrl);
-        return newUrl;
+        try {
+            int portForwardingL = session.setPortForwardingL(localPort, remoteHost, port);
+            log.error("createForwardingPort: 127.0.0.1:{} --> {}:{}", port, remoteHost, portForwardingL);
+            return portForwardingL;
+        } catch (JSchException e) {
+            throw new RuntimeException("建立erp通道失败", e);
+        }
+
     }
 }

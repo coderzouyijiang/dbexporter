@@ -162,7 +162,7 @@
 					<!-- JDBC connection parameters -->
 					<jdbc>
 						<driver>com.mysql.jdbc.Driver</driver>
-						<url><![CDATA[jdbc:mysql://127.0.0.1:3306/db_calculator?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10]]></url>
+						<url><![CDATA[jdbc:mysql://127.0.0.1:3307/db_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10]]></url>
 						<user>mall</user>
 						<password>cm1ZwY0MrMZSoUvcowr5</password>
 					</jdbc>
@@ -173,7 +173,7 @@
 							<name>org.jooq.meta.mysql.MySQLDatabase</name>
 							<includes>.*</includes>
 							<excludes></excludes>
-							<inputSchema>db_calculator</inputSchema>
+							<inputSchema>db_mall</inputSchema>
 						</database>
 						<target>
 							<packageName>cn.zyj.dbexporter.jooq</packageName>

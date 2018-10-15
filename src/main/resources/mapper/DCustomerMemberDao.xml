@@ -51,7 +51,7 @@
         and ca.id=#{accountId}
     </select>
 
-    <select id="getCustomerMemberTotalCount" resultType="int"
+    <select id="getCustomerMemberTotalCount" resultType="long"
             parameterType="cn.zyj.dbexporter.mybatis.model.CustomerMemberDTO">
         select count(1) from (
         <include refid="getCustomerMembers"></include>
@@ -121,7 +121,7 @@
             ,handle_time
         </if>
         ) values (
-        ,#{groupCustomerId}
+        #{groupCustomerId}
         ,#{customerId}
         <if test="remarkName!=null">
             ,#{remarkName}
@@ -145,22 +145,22 @@
         update t_customer_member_invite
         <set>
             <if test="remarkName!=null">
-                ,remark_name=#{remarkName}
+                remark_name=#{remarkName},
             </if>
             <if test="type!=null">
-                ,`type`=#{type}
+                `type`=#{type},
             </if>
             <if test="status!=null">
-                ,`status`=#{status}
+                `status`=#{status},
             </if>
             <if test="dataStatus!=null">
-                ,`data_status`=#{dataStatus}
+                `data_status`=#{dataStatus},
             </if>
             <if test="failCode!=null">
-                ,fail_code=#{failCode}
+                fail_code=#{failCode},
             </if>
             <if test="handleTime!=null">
-                ,handle_time=#{handleTime}
+                handle_time=#{handleTime},
             </if>
         </set>
         <where>
