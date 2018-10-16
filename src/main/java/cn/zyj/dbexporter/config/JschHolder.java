@@ -56,7 +56,7 @@ public class JschHolder {
         }
         try {
             int portForwardingL = session.setPortForwardingL(localPort, remoteHost, port);
-            log.error("createForwardingPort: 127.0.0.1:{} --> {}:{}", port, remoteHost, portForwardingL);
+            log.error("createForwardingPort: 127.0.0.1:{} --> {}:{}", portForwardingL, remoteHost, port);
             return portForwardingL;
         } catch (JSchException e) {
             throw new RuntimeException("建立erp通道失败", e);

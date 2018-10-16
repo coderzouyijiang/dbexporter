@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.4.0.xsd">
+
+    <!-- JDBC connection parameters -->
+    <jdbc>
+        <driver>com.mysql.jdbc.Driver</driver>
+        <url>
+            <![CDATA[jdbc:mysql://127.0.0.1:3307/db_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false&maxReconnects=10]]></url>
+        <user>mall</user>
+        <password>cm1ZwY0MrMZSoUvcowr5</password>
+    </jdbc>
+
+    <!-- Generator parameters -->
+    <generator>
+        <database>
+            <unsignedTypes>false</unsignedTypes>
+            <name>org.jooq.meta.mysql.MySQLDatabase</name>
+            <includes>.*</includes>
+            <excludes></excludes>
+            <schemata>
+                <schema>
+                    <inputSchema>db_mall</inputSchema>
+                </schema>
+                <schema>
+                    <inputSchema>db_calculator</inputSchema>
+                </schema>
+            </schemata>
+        </database>
+        <generate>
+            <!-- Primary key / foreign key relations should be generated and used.
+This is a prerequisite for various advanced features.
+Defaults to true -->
+            <relations>true</relations>
+
+            <!-- Generate deprecated code for backwards compatibility
+                 Defaults to true -->
+            <deprecated>true</deprecated>
+
+            <!-- Do not reuse this property. It is deprecated as of jOOQ 3.3.0 -->
+            <instanceFields>true</instanceFields>
+
+            <!-- Generate the javax.annotation.Generated annotation to indicate
+                 jOOQ version used for source code.
+                 Defaults to true -->
+            <generatedAnnotation>true</generatedAnnotation>
+
+            <!-- Generate jOOQ Record classes for type-safe querying. You can
+                 turn this off, if you don't need "active records" for CRUD
+                 Defaults to true -->
+            <records>true</records>
+
+            <!-- Generate POJOs in addition to Record classes for usage of the
+                 ResultQuery.fetchInto(Class) API
+                 Defaults to false -->
+            <pojos>false</pojos>
+
+            <!-- Generate immutable POJOs for usage of the ResultQuery.fetchInto(Class) API
+                 This overrides any value set in <pojos/>
+                 Defaults to false -->
+            <immutablePojos>false</immutablePojos>
+
+            <!-- Generate interfaces that will be implemented by records and/or pojos.
+                 You can also use these interfaces in Record.into(Class<?>) and similar
+                 methods, to let jOOQ return proxy objects for them.
+                 Defaults to false -->
+            <interfaces>false</interfaces>
+
+            <!-- Generate DAOs in addition to POJO classes
+                 Defaults to false -->
+            <daos>true</daos>
+
+            <!-- Annotate POJOs and Records with JPA annotations for increased
+                 compatibility and better integration with JPA/Hibernate, etc
+                 Defaults to false -->
+            <jpaAnnotations>false</jpaAnnotations>
+
+            <!-- Annotate POJOs and Records with JSR-303 validation annotations
+                 Defaults to false -->
+            <validationAnnotations>true</validationAnnotations>
+
+            <!-- Allow to turn off the generation of global object references, which include
+
+                 - Tables.java
+                 - Sequences.java
+                 - UDTs.java
+
+                 Turning off the generation of the above files may be necessary for very
+                 large schemas, which exceed the amount of allowed constants in a class's
+                 constant pool (64k) or, whose static initialiser would exceed 64k of
+                 byte code
+
+                 Defaults to true -->
+            <globalObjectReferences>true</globalObjectReferences>
+
+            <!-- Generate fluent setters in
+
+                 - records
+                 - pojos
+                 - interfaces
+
+                 Fluent setters are against the JavaBeans specification, but can be quite
+                 useful to those users who do not depend on EL, JSP, JSF, etc.
+
+                 Defaults to false -->
+            <fluentSetters>true</fluentSetters>
+        </generate>
+        <target>
+            <packageName>cn.zyj.dbexporter.jooq</packageName>
+            <!--<directory>${project.basedir}/src/main/java</directory>-->
+            <directory>src/main/java</directory>
+        </target>
+    </generator>
+</configuration>

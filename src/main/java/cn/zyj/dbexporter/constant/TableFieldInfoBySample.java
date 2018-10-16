@@ -1,13 +1,13 @@
 package cn.zyj.dbexporter.constant;
 
-import cn.zyj.dbexporter.jooq.DbCalculator;
+import cn.zyj.dbexporter.jooq.db_calculator.DbCalculator;
 import com.google.common.collect.ImmutableSet;
 import org.jooq.Field;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static cn.zyj.dbexporter.jooq.Tables.T_RESOURCE;
+import static cn.zyj.dbexporter.jooq.db_calculator.Tables.T_RESOURCE;
 
 /**
  * 字段信息
@@ -25,7 +25,7 @@ public class TableFieldInfoBySample<T> implements TableFieldInfo<T> {
     private final ImmutableSet<Field> tableFields;
 
     @Override
-    public ImmutableSet<Field> getTableFields(){
+    public ImmutableSet<Field> getTableFields() {
         return tableFields;
     }
 }

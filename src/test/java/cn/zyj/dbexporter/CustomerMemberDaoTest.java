@@ -1,11 +1,11 @@
 package cn.zyj.dbexporter;
 
-import cn.zyj.dbexporter.jooq.tables.TCustomer;
-import cn.zyj.dbexporter.jooq.tables.TCustomerAccount;
-import cn.zyj.dbexporter.jooq.tables.TCustomerMemberInvite;
-import cn.zyj.dbexporter.jooq.tables.records.TCustomerAccountRecord;
-import cn.zyj.dbexporter.jooq.tables.records.TCustomerMemberInviteRecord;
-import cn.zyj.dbexporter.jooq.tables.records.TCustomerRecord;
+import cn.zyj.dbexporter.jooq.db_mall.tables.TCustomer;
+import cn.zyj.dbexporter.jooq.db_mall.tables.TCustomerAccount;
+import cn.zyj.dbexporter.jooq.db_mall.tables.TCustomerMemberInvite;
+import cn.zyj.dbexporter.jooq.db_mall.tables.records.TCustomerAccountRecord;
+import cn.zyj.dbexporter.jooq.db_mall.tables.records.TCustomerMemberInviteRecord;
+import cn.zyj.dbexporter.jooq.db_mall.tables.records.TCustomerRecord;
 import cn.zyj.dbexporter.mybatis.dao.DCustomerMemberDao;
 import cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite;
 import cn.zyj.dbexporter.util.AssertUtil;
@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Random;
 
 import static cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite.*;
-
-import static cn.zyj.dbexporter.jooq.Tables.*;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -137,7 +135,7 @@ public class CustomerMemberDaoTest {
             customer.setReceivePhone(customer.getPhone());
             customer.setPassword("123456");
             customer.setRegisterIp(127L);
-            customer.setPayType((byte)1);
+            customer.setPayType((byte) 1);
 
             customer = dsl.insertInto(c)
                     .set(customer)

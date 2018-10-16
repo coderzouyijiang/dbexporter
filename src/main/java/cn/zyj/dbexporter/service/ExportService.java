@@ -3,7 +3,7 @@ package cn.zyj.dbexporter.service;
 import cn.zyj.dbexporter.constant.TableFieldInfo;
 import cn.zyj.dbexporter.constant.TableFieldInfos;
 import cn.zyj.dbexporter.constant.ToTextPurpose;
-import cn.zyj.dbexporter.jooq.tables.records.TResourceRecord;
+import cn.zyj.dbexporter.jooq.db_calculator.tables.records.TResourceRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -21,7 +21,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static cn.zyj.dbexporter.jooq.Tables.T_RESOURCE;
+import static cn.zyj.dbexporter.jooq.db_calculator.Tables.T_RESOURCE;
 
 @Slf4j
 @Service

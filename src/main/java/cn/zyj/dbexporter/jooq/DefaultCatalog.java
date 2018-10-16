@@ -4,6 +4,9 @@
 package cn.zyj.dbexporter.jooq;
 
 
+import cn.zyj.dbexporter.jooq.db_calculator.DbCalculator;
+import cn.zyj.dbexporter.jooq.db_mall.DbMall;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +30,7 @@ import org.jooq.impl.CatalogImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultCatalog extends CatalogImpl {
 
-    private static final long serialVersionUID = -596695736;
+    private static final long serialVersionUID = -970633196;
 
     /**
      * The reference instance of <code></code>
@@ -35,9 +38,14 @@ public class DefaultCatalog extends CatalogImpl {
     public static final DefaultCatalog DEFAULT_CATALOG = new DefaultCatalog();
 
     /**
+     * The schema <code>db_calculator</code>.
+     */
+    public final DbCalculator DB_CALCULATOR = cn.zyj.dbexporter.jooq.db_calculator.DbCalculator.DB_CALCULATOR;
+
+    /**
      * The schema <code>db_mall</code>.
      */
-    public final DbMall DB_MALL = cn.zyj.dbexporter.jooq.DbMall.DB_MALL;
+    public final DbMall DB_MALL = cn.zyj.dbexporter.jooq.db_mall.DbMall.DB_MALL;
 
     /**
      * No further instances allowed
@@ -55,6 +63,7 @@ public class DefaultCatalog extends CatalogImpl {
 
     private final List<Schema> getSchemas0() {
         return Arrays.<Schema>asList(
+            DbCalculator.DB_CALCULATOR,
             DbMall.DB_MALL);
     }
 }

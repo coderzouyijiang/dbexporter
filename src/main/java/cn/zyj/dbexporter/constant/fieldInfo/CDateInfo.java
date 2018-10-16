@@ -6,7 +6,7 @@ import cn.zyj.dbexporter.constant.ToTextPurpose;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-import static cn.zyj.dbexporter.jooq.Tables.*;
+import static cn.zyj.dbexporter.jooq.db_calculator.Tables.*;
 
 public class CDateInfo extends TableFieldInfoBySample<Timestamp> {
 

@@ -1,6 +1,6 @@
 package cn.zyj.dbexporter.controller;
 
-import cn.zyj.dbexporter.jooq.tables.records.TResourceRecord;
+import cn.zyj.dbexporter.jooq.db_calculator.tables.records.TResourceRecord;
 import cn.zyj.dbexporter.service.ExportService;
 import org.jooq.Cursor;
 import org.springframework.beans.factory.annotation.Autowired;

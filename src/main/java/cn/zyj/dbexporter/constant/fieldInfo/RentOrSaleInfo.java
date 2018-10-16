@@ -13,7 +13,7 @@ import java.util.Set;
 
 import static cn.zyj.dbexporter.constant.ToTextPurpose.*;
 import static cn.zyj.dbexporter.constant.enums.RentOrSaleEnum.*;
-import static cn.zyj.dbexporter.jooq.Tables.*;
+import static cn.zyj.dbexporter.jooq.db_calculator.Tables.*;
 
 public class RentOrSaleInfo implements TableFieldInfo<UByte> {
 
