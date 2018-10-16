@@ -1,5 +1,11 @@
 package cn.zyj.dbexporter;
 
+import cn.zyj.dbexporter.jooq.tables.TCustomer;
+import cn.zyj.dbexporter.jooq.tables.TCustomerAccount;
+import cn.zyj.dbexporter.jooq.tables.TCustomerMemberInvite;
+import cn.zyj.dbexporter.jooq.tables.records.TCustomerAccountRecord;
+import cn.zyj.dbexporter.jooq.tables.records.TCustomerMemberInviteRecord;
+import cn.zyj.dbexporter.jooq.tables.records.TCustomerRecord;
 import cn.zyj.dbexporter.mybatis.dao.DCustomerMemberDao;
 import cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite;
 import cn.zyj.dbexporter.util.AssertUtil;
@@ -7,6 +13,8 @@ import cn.zyj.dbexporter.util.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +27,8 @@ import java.util.List;
 import java.util.Random;
 
 import static cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite.*;
+
+import static cn.zyj.dbexporter.jooq.Tables.*;
 
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -97,13 +107,49 @@ public class CustomerMemberDaoTest {
         Assert.assertEquals(delete, 1L);
     }
 
-    @Test
-    public void test_create_customer_by_invite(){
+    @Autowired
+    DSLContext dsl;
 
+    @Test
+    public void test_create_customer_by_invite() {
+        Random random = new Random();
+
+        TCustomerMemberInvite tmi = new TCustomerMemberInvite();
+        TCustomerAccount ca = new TCustomerAccount();
+        TCustomer c = new TCustomer();
+
+        List<TCustomerMemberInviteRecord> invites = dsl.selectFrom(tmi)
+                .where(tmi.DATA_STATUS.eq((byte) 0))
+                .fetch()
+                .into(TCustomerMemberInviteRecord.class);
+        for (TCustomerMemberInviteRecord invite : invites) {
+            TCustomerRecord customer = dsl.selectFrom(c)
+                    .where(c.STATUS.notEqual((byte) 1)
+                            .and(c.ID.eq(invite.getCustomerId().intValue())))
+                    .fetchAny();
+//            TCustomerAccountRecord account = dsl.selectFrom(ca)
+//                    .where(ca.STATUS.notEqual(0)
+//                            .and(ca.OLD_CUSTOMER_ID.eq(invite.getCustomerId())))
+//                    .fetchAny();
+            if (customer != null) continue;
+            customer = new TCustomerRecord();
+            customer.setPhone("111" + (random.nextInt(90000000) + 10000000));
+            customer.setReceivePhone(customer.getPhone());
+            customer.setPassword("123456");
+            customer.setRegisterIp(127L);
+            customer.setPayType((byte)1);
+
+            customer = dsl.insertInto(c)
+                    .set(customer)
+                    .returning(c.ID)
+                    .fetchOne();
+            Assert.assertNotNull(customer);
+            Assert.assertNotNull(customer.getId());
+        }
     }
 
     @Test
-    public void test_member_CRUD(){
+    public void test_member_CRUD() {
 
 
     }
