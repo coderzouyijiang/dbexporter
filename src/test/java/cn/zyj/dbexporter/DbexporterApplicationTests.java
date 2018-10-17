@@ -6,10 +6,7 @@ import cn.zyj.dbexporter.jooq.db_calculator.tables.TSkuRelation;
 import cn.zyj.dbexporter.jooq.db_calculator.tables.records.TCalculatorRecord;
 import cn.zyj.dbexporter.jooq.db_calculator.tables.records.TResourceRecord;
 import cn.zyj.dbexporter.service.ExportService;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -46,6 +43,7 @@ public class DbexporterApplicationTests {
         exportService.exportExcelForTResource(fileName);
     }
 
+    @ToString(of = {"rowIndex", "resourceId", "sku", "rentOrSale"})
     @NoArgsConstructor
     @AllArgsConstructor
     @EqualsAndHashCode(of = {"resourceId", "sku", "rentOrSale"})
@@ -135,7 +133,12 @@ public class DbexporterApplicationTests {
                         .where(sr.GROUP_RESOURCE_ID.eq(dto.getResourceId()))
                         .fetch()
                         .stream()
-                        .map(it -> idMap.get(it.component1()))
+                        .map(it -> {
+                            log.info("子资源id=" + it.component1());
+                            ResourceDTO childDto = idMap.get(it.component1());
+                            log.info("子资源 : " + childDto);
+                            return childDto;
+                        })
                         .filter(it -> it != null)
                         .map(it -> it.getRentOrSale().equals(SALE))
                         .reduce((a, b) -> a || b)
