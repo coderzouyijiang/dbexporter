@@ -62,11 +62,11 @@ public class DbexporterApplicationTests {
         TResource res = new TResource("res");
         TSkuRelation sr = new TSkuRelation("sr");
 
-        Condition calNotDelete = cal.DATA_STATUS.eq(0);
-        Condition calNotHistory = cal.IS_HISTORY.eq(0);
+        Condition calNotDelete = cal.DATA_STATUS.eq(DSL.inline(0));
+        Condition calNotHistory = cal.IS_HISTORY.eq(DSL.inline(0));
 
-        Condition resNotDelete = res.DATA_STATUS.eq(0);
-        Condition resIsGroup = res.IS_GROUP.eq(1);
+        Condition resNotDelete = res.DATA_STATUS.eq(DSL.inline(0));
+        Condition resIsGroup = res.IS_GROUP.eq(DSL.inline(1));
 
         Byte RENT = Byte.valueOf("1");
         Byte SALE = Byte.valueOf("2");
