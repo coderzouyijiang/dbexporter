@@ -11,11 +11,11 @@ public class SqlExcuteListener extends DefaultExecuteListener {
 
     @Override
     public void executeStart(ExecuteContext ctx) {
-        log.info("sql:{}",ctx.sql());
+//        log.info("sql:{}",ctx.sql());
     }
 
     @Override
     public void executeEnd(ExecuteContext ctx) {
-        log.info("result:{}",ctx.result());
+//        log.info("result:{}",ctx.result());
     }
 }
