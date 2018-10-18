@@ -1,8 +1,9 @@
 package cn.zyj.dbexporter.mybatis.model;
 
 import lombok.Data;
+import lombok.ToString;
 
-
+@ToString
 @Data
 public class CustomerMember {
     // 邀请id。可能是子账号主动申请加入的
@@ -23,7 +24,7 @@ public class CustomerMember {
     //false-禁用
     private Integer enable;
     // 失败原因码 0-拒绝，其他-mall中定义
-    private Integer failCod;
+    private Integer failCode;
 
     // 【再次邀请】功能可用时间,13位毫秒值
     private Long inviteAvailableTime;

@@ -7,15 +7,21 @@ import cn.zyj.dbexporter.jooq.db_mall.tables.records.TCustomerAccountRecord;
 import cn.zyj.dbexporter.jooq.db_mall.tables.records.TCustomerMemberInviteRecord;
 import cn.zyj.dbexporter.jooq.db_mall.tables.records.TCustomerRecord;
 import cn.zyj.dbexporter.mybatis.dao.DCustomerMemberDao;
+import cn.zyj.dbexporter.mybatis.model.CustomerMember;
+import cn.zyj.dbexporter.mybatis.model.CustomerMemberDTO;
 import cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite;
 import cn.zyj.dbexporter.util.AssertUtil;
 import cn.zyj.dbexporter.util.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.imageio.plugins.common.I18N;
 import lombok.extern.slf4j.Slf4j;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +34,10 @@ import java.util.Random;
 
 import static cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite.*;
 
+/**
+ * 测试成员管理dao
+ * beta
+ */
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {DbexporterApplication.class})
@@ -146,9 +156,63 @@ public class CustomerMemberDaoTest {
         }
     }
 
+    /**
+     * 为已经存在的公司成员创建邀请
+     */
+    @Test
+    public void initData() {
+        TCustomerAccount ca = new TCustomerAccount("ca");
+        Condition caNotDelete = ca.STATUS.notEqual(2);
+        Condition caNotManager = ca.CUSTOMER_ID.notEqual(ca.OLD_CUSTOMER_ID);
+
+        TCustomerMemberInvite cmi = new TCustomerMemberInvite("cmi");
+        Condition cmiNotDelete = cmi.DATA_STATUS.notEqual(Byte.valueOf("1"));
+
+        Result<TCustomerAccountRecord> result = dsl
+                .selectFrom(ca)
+                .where(caNotDelete
+                        .and(caNotManager)
+                ).fetch();
+        for (TCustomerAccountRecord account : result) {
+            /*Integer count = dsl.selectCount()
+                    .from(cmi)
+                    .where(cmiNotDelete
+                            .and(cmi.GROUP_CUSTOMER_ID.eq(account.getCustomerId()))
+                            .and(cmi.CUSTOMER_ID.eq(account.getOldCustomerId()))
+                    ).fetchAny()
+                    .component1();*/
+            CustomerMemberInvite invite = new CustomerMemberInvite();
+            invite.setGroupCustomerId(account.getCustomerId());
+            invite.setCustomerId(account.getOldCustomerId());
+            invite.setDataStatus(CustomerMemberInvite.DATA_NORMAL);
+            List<CustomerMemberInvite> invites = customerMemberDao.getInvites(invite);
+            if (invites.size() == 0) {
+                log.info("invite已经存在:{}", invite);
+                continue;
+            }
+            invite.setType(CustomerMemberInvite.TYPE_APPLY);
+            invite.setStatus(CustomerMemberInvite.STATUS_SUCCESS);
+            customerMemberDao.saveInvite(invite);
+            log.info("创建invite成功:{}", invite);
+        }
+    }
+
     @Test
     public void test_member_CRUD() {
-
+        CustomerMemberDTO dto = new CustomerMemberDTO();
+        dto.setGroupCustomerId(10000347L);
+        dto.setPageIndex(0);
+        dto.setPageSize(100);
+        long totalCount = customerMemberDao.getCustomerMemberTotalCount(dto);
+        log.info("totalCount:{}", totalCount);
+        List<CustomerMember> list = customerMemberDao.getCustomerMemberPage(dto);
+        log.info("list:{}", list);
+        for(CustomerMember member:list){
+            CustomerMember memberByAccountId = customerMemberDao.getCustomerMemberByAccountId(member.getAccountId());
+            Assert.assertNotNull(memberByAccountId);
+            CustomerMember memberByInviteId = customerMemberDao.getCustomerMemberByInviteId(member.getId());
+            Assert.assertNotNull(memberByInviteId);
+        }
 
     }
 

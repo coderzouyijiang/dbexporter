@@ -24,6 +24,7 @@ import java.util.*;
 
 /**
  * 导入导出计算器数据
+ * inner
  */
 @Slf4j
 @RunWith(SpringRunner.class)
@@ -154,7 +155,8 @@ public class DbexporterApplicationTests {
                     .set(res.RENT_OR_SALE_STATUS, DSL.inline(dto.getRentOrSale().equals(RENT) ? STATUS_NORMAL : STATUS_TOUPDATE))
                     .where(res.ID.eq(DSL.inline(dto.getResourceId())));
             String updateResSql = updateRes.getSQL();
-            out.println(updateResSql);
+            out.print(updateResSql);
+            out.println(";");
 
             UpdateConditionStep<TCalculatorRecord> updateCal = dsl
                     .update(cal)
@@ -163,7 +165,8 @@ public class DbexporterApplicationTests {
                             .and(calNotHistory)
                             .and(cal.SKU.eq(DSL.inline(dto.getSku()))));
             String updateCalSql = updateCal.getSQL();
-            out.println(updateCalSql);
+            out.print(updateCalSql);
+            out.println(";");
 
             if (i % 100 == 0) {
                 log.info("i:" + i);

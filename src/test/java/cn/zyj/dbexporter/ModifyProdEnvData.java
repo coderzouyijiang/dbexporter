@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 /**
  * 修改t_calculator生产数据
+ * inner
  */
 @Slf4j
 @RunWith(SpringRunner.class)
