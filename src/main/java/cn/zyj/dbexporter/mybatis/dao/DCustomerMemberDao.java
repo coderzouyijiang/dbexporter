@@ -1,9 +1,6 @@
 package cn.zyj.dbexporter.mybatis.dao;
 
-import cn.zyj.dbexporter.mybatis.model.CustomerMember;
-import cn.zyj.dbexporter.mybatis.model.CustomerMemberDTO;
-import cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite;
-import cn.zyj.dbexporter.mybatis.model.CustomerMemberInviteMsg;
+import cn.zyj.dbexporter.mybatis.model.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -39,4 +36,7 @@ public interface DCustomerMemberDao {
     List<CustomerMemberInvite> getInvites(CustomerMemberInvite invite);
 
     long deleteInviteById(@Param("id") Long id);
+
+    public List<UserPayment> getUserPayAmount(@Param("customerIds") List<Long> customerIds, @Param("startDate") String startDate, @Param("endDate") String endDate);
+
 }

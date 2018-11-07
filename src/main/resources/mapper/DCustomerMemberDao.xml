@@ -230,4 +230,20 @@
         set data_status=1
         where id=#{id}
     </update>
+
+
+    <select id="getUserPayAmount" resultType="cn.zyj.dbexporter.mybatis.model.UserPayment">
+        select customer_id as ecmId, sum(amount) as payments,max(pay_date) as payTime
+        from t_customer_bill
+        where type_id != 20
+        and account_type = 0
+        and amount &lt; 0
+        and pay_date &gt;= #{startDate}
+        and pay_date &lt;  #{endDate}
+        and customer_id in
+        <foreach collection="customerIds" item="customerId" open="(" separator="," close=")">
+            #{customerId}
+        </foreach>
+        group by customer_id
+    </select>
 </mapper>

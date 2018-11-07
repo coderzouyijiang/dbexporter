@@ -10,6 +10,7 @@ import cn.zyj.dbexporter.mybatis.dao.DCustomerMemberDao;
 import cn.zyj.dbexporter.mybatis.model.CustomerMember;
 import cn.zyj.dbexporter.mybatis.model.CustomerMemberDTO;
 import cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite;
+import cn.zyj.dbexporter.mybatis.model.UserPayment;
 import cn.zyj.dbexporter.util.AssertUtil;
 import cn.zyj.dbexporter.util.JsonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -207,13 +209,20 @@ public class CustomerMemberDaoTest {
         log.info("totalCount:{}", totalCount);
         List<CustomerMember> list = customerMemberDao.getCustomerMemberPage(dto);
         log.info("list:{}", list);
-        for(CustomerMember member:list){
+        for (CustomerMember member : list) {
             CustomerMember memberByAccountId = customerMemberDao.getCustomerMemberByAccountId(member.getAccountId());
             Assert.assertNotNull(memberByAccountId);
             CustomerMember memberByInviteId = customerMemberDao.getCustomerMemberByInviteId(member.getId());
             Assert.assertNotNull(memberByInviteId);
         }
 
+    }
+
+    @Test
+    public void test_getUserPayAmount() {
+        List<UserPayment> list = customerMemberDao.getUserPayAmount(Arrays.asList(10049722L, 1000239L),
+                "2018-11-07 00:00:00", "2018-11-08 00:00:00");
+        log.info("userPayment:" + list);
     }
 
 }
