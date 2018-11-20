@@ -141,6 +141,7 @@
         )
     </insert>
 
+<!--
     <update id="updateInvite" parameterType="cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite">
         update t_customer_member_invite
         <set>
@@ -178,6 +179,7 @@
             </choose>
         </where>
     </update>
+-->
 
     <sql id="allFields">
       id,customer_id,group_customer_id,`type`,`status`,`data_status`,
@@ -246,4 +248,90 @@
         </foreach>
         group by customer_id
     </select>
+
+    <select id="countLoginLog" resultType="long">
+        select count(0)
+        from t_customer_login_log
+        <where>
+            <choose>
+                <when test="accountId!=null">
+                    and customer_id = #{accountId}
+                </when>
+                <otherwise>
+                    and 1=0
+                </otherwise>
+            </choose>
+            <if test="typeId!=null">
+                and type_id = #{typeId}
+            </if>
+            <if test="startDate!=null">
+                and cdate &gt;= #{startDate}
+            </if>
+            <if test="endDate!=null">
+                and cdate &lt; #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <sql id="updateInviteSet">
+        <set>
+            <if test="content.remarkName!=null">
+                remark_name=#{content.remarkName},
+            </if>
+            <if test="content.type!=null">
+                `type`=#{content.type},
+            </if>
+            <if test="content.status!=null">
+                `status`=#{content.status},
+            </if>
+            <if test="content.dataStatus!=null">
+                `data_status`=#{content.dataStatus},
+            </if>
+            <if test="content.failCode!=null">
+                fail_code=#{content.failCode},
+            </if>
+            <if test="content.handleTime!=null">
+                handle_time=#{content.handleTime},
+            </if>
+        </set>
+    </sql>
+
+    <update id="updateInviteById">
+        update t_customer_member_invite
+        <include refid="updateInviteSet"></include>
+        <where>
+            <if test="dataStatus!=null">
+                and data_status=#{dataStatus}
+            </if>
+            <choose>
+                <when test="id!=null">
+                    and id=#{id}
+                </when>
+                <otherwise>
+                    and 1=0
+                </otherwise>
+            </choose>
+        </where>
+    </update>
+
+    <update id="updateInvite">
+        update t_customer_member_invite
+        <include refid="updateInviteSet"></include>
+        <where>
+            <if test="dataStatus!=null">
+                and data_status=#{dataStatus}
+            </if>
+            <choose>
+                <when test="groupCustomerId!=null">
+                    and group_customer_id=#{groupCustomerId}
+                </when>
+                <when test="customerId!=null">
+                    and customer_id=#{customerId}
+                </when>
+                <otherwise>
+                    and 1=0
+                </otherwise>
+            </choose>
+        </where>
+    </update>
 </mapper>

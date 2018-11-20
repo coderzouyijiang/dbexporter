@@ -1,6 +1,8 @@
 package cn.zyj.dbexporter.mybatis.dao;
 
 import cn.zyj.dbexporter.mybatis.model.*;
+import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -29,7 +31,7 @@ public interface DCustomerMemberDao {
 
     long saveInvite(CustomerMemberInvite invite);
 
-    long updateInvite(CustomerMemberInvite invite);
+//    long updateInvite(CustomerMemberInvite invite);
 
     CustomerMemberInvite getInviteById(@Param("id") Long id);
 
@@ -37,6 +39,17 @@ public interface DCustomerMemberDao {
 
     long deleteInviteById(@Param("id") Long id);
 
-    public List<UserPayment> getUserPayAmount(@Param("customerIds") List<Long> customerIds, @Param("startDate") String startDate, @Param("endDate") String endDate);
+    List<UserPayment> getUserPayAmount(@Param("customerIds") List<Long> customerIds, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
+    long countLoginLog(@Param("accountId") Long accountId, @Param("typeId") Integer typeId,
+                       @Param("startDate") String startDate, @Param("endDate") String endDate);
+
+    long updateInviteById(@NotNull @Param("content") CustomerMemberInvite invite,
+                          @Nullable @Param("dataStatus") Integer dataStatus,
+                          @NotNull @Param("id") Long id);
+
+    long updateInvite(@NotNull @Param("content") CustomerMemberInvite invite,
+                      @Nullable @Param("dataStatus") Integer dataStatus,
+                      @Nullable @Param("groupCustomerId") Long groupCustomerId,
+                      @Nullable @Param("customerId") Long customerId);
 }

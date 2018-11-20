@@ -29,10 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite.*;
 
@@ -95,10 +92,11 @@ public class CustomerMemberDaoTest {
 //        AssertUtil.dateEquals(invite.getHandleTime(), invite2.getHandleTime());
 
         CustomerMemberInvite inviteUpdate = new CustomerMemberInvite();
-        inviteUpdate.setId(invite2.getId());
+//        inviteUpdate.setId(invite2.getId());
         inviteUpdate.setRemarkName("xyz" + (new Random().nextInt(100000)));
         inviteUpdate.setHandleTime(new Date());
-        long upate = customerMemberDao.updateInvite(inviteUpdate);
+//        long upate = customerMemberDao.updateInvite(inviteUpdate);
+        long upate = customerMemberDao.updateInviteById(inviteUpdate, null, invite2.getId());
         Assert.assertEquals(upate, 1);
 
         List<CustomerMemberInvite> invites2 = customerMemberDao.getInvites(input);
@@ -223,6 +221,34 @@ public class CustomerMemberDaoTest {
         List<UserPayment> list = customerMemberDao.getUserPayAmount(Arrays.asList(10049722L, 1000239L),
                 "2018-11-07 00:00:00", "2018-11-08 00:00:00");
         log.info("userPayment:" + list);
+    }
+
+    @Test
+    public void test_countLoginLog() {
+        long count = customerMemberDao.countLoginLog(7392L, 2, null, null);
+        log.info("countLoginLog:" + count);
+
+        Calendar cal = Calendar.getInstance();
+        String startDate = getDate(cal);
+        cal.add(Calendar.DATE, 1);
+        String endDate = getDate(cal);
+
+        count = customerMemberDao.countLoginLog(76906L, 2, startDate, endDate);
+        log.info("countLoginLog:" + count);
+    }
+
+    private String getDate(Calendar cal) {
+        String dateFormat = "%04d-%02d-%02d";
+        String date = String.format(dateFormat, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
+        return date;
+    }
+
+    @Test
+    public void test_update() {
+        CustomerMemberInvite invite = new CustomerMemberInvite();
+        invite.setRemarkName("ijk_123");
+        long update = customerMemberDao.updateInvite(invite, DATA_NORMAL, 10000967L, 10001531L);
+        log.info("update:" + update);
     }
 
 }
