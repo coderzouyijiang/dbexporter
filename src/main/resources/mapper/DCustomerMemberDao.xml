@@ -141,45 +141,45 @@
         )
     </insert>
 
-<!--
-    <update id="updateInvite" parameterType="cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite">
-        update t_customer_member_invite
-        <set>
-            <if test="remarkName!=null">
-                remark_name=#{remarkName},
-            </if>
-            <if test="type!=null">
-                `type`=#{type},
-            </if>
-            <if test="status!=null">
-                `status`=#{status},
-            </if>
-            <if test="dataStatus!=null">
-                `data_status`=#{dataStatus},
-            </if>
-            <if test="failCode!=null">
-                fail_code=#{failCode},
-            </if>
-            <if test="handleTime!=null">
-                handle_time=#{handleTime},
-            </if>
-        </set>
-        <where>
-            <choose>
-                <when test="id!=null">
-                    and id=#{id}
-                </when>
-                <when test="groupCustomerId!=null and customerId!=null">
-                    and group_customer_id=#{groupCustomerId}
-                    and customer_id=#{customerId}
-                </when>
-                <otherwise>
-                    and 1=0
-                </otherwise>
-            </choose>
-        </where>
-    </update>
--->
+    <!--
+        <update id="updateInvite" parameterType="cn.zyj.dbexporter.mybatis.model.CustomerMemberInvite">
+            update t_customer_member_invite
+            <set>
+                <if test="remarkName!=null">
+                    remark_name=#{remarkName},
+                </if>
+                <if test="type!=null">
+                    `type`=#{type},
+                </if>
+                <if test="status!=null">
+                    `status`=#{status},
+                </if>
+                <if test="dataStatus!=null">
+                    `data_status`=#{dataStatus},
+                </if>
+                <if test="failCode!=null">
+                    fail_code=#{failCode},
+                </if>
+                <if test="handleTime!=null">
+                    handle_time=#{handleTime},
+                </if>
+            </set>
+            <where>
+                <choose>
+                    <when test="id!=null">
+                        and id=#{id}
+                    </when>
+                    <when test="groupCustomerId!=null and customerId!=null">
+                        and group_customer_id=#{groupCustomerId}
+                        and customer_id=#{customerId}
+                    </when>
+                    <otherwise>
+                        and 1=0
+                    </otherwise>
+                </choose>
+            </where>
+        </update>
+    -->
 
     <sql id="allFields">
       id,customer_id,group_customer_id,`type`,`status`,`data_status`,
@@ -241,7 +241,7 @@
         and account_type = 0
         and amount &lt; 0
         and pay_date &gt;= #{startDate}
-        and pay_date &lt;  #{endDate}
+        and pay_date &lt; #{endDate}
         and customer_id in
         <foreach collection="customerIds" item="customerId" open="(" separator="," close=")">
             #{customerId}
@@ -321,17 +321,12 @@
             <if test="dataStatus!=null">
                 and data_status=#{dataStatus}
             </if>
-            <choose>
-                <when test="groupCustomerId!=null">
-                    and group_customer_id=#{groupCustomerId}
-                </when>
-                <when test="customerId!=null">
-                    and customer_id=#{customerId}
-                </when>
-                <otherwise>
-                    and 1=0
-                </otherwise>
-            </choose>
+            <if test="groupCustomerId!=null">
+                and group_customer_id=#{groupCustomerId}
+            </if>
+            <if test="customerId!=null">
+                and customer_id=#{customerId}
+            </if>
         </where>
     </update>
 </mapper>
