@@ -2,11 +2,15 @@ package cn.zyj.dbexporter;
 
 import cn.zyj.dbexporter.common.EncryptHelper;
 import cn.zyj.dbexporter.model.CustomerSearchModel;
+import cn.zyj.dbexporter.model.CustomerSearchResultItem;
+import cn.zyj.dbexporter.model.SoPageData;
+import cn.zyj.dbexporter.model.SoResponse;
 import cn.zyj.dbexporter.mybatis.model.CustomerMember;
 import cn.zyj.dbexporter.util.NetUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import lombok.Lombok;
 import lombok.ToString;
@@ -26,6 +30,7 @@ import org.springframework.boot.convert.Delimiter;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -115,6 +120,7 @@ public class StaticMethodTest {
         model.setCallback(null);
         String queryString = toQueryString(toMap(model));
         String url = soApiSeachCustomer + "?" + queryString;
+        log.info("url:" + url);
 //        String respBody = HttpHelper.doGet(url, null);
         String respBody = "{}";
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -124,18 +130,20 @@ public class StaticMethodTest {
         } catch (Exception e) {
             log.error("", e);
         }
-        JSONObject root = JSON.parseObject(respBody);
-        Integer code = root.getInteger("code");
-        if (code != 0) {
-            log.error(respBody);
-            throw new RuntimeException("调用数据环查询用户接口返回code=" + code);
-        }
-        Boolean hasResult = root.getBoolean("hasResult");
-        if (hasResult != null && hasResult) {
-            Object data = root.get("data");
-            return data;
-        }
-        return null;
+//        JSONObject root = JSON.parseObject(respBody);
+//        Integer code = root.getInteger("code");
+//        if (code != 0) {
+//            log.error(respBody);
+//            throw new RuntimeException("调用数据环查询用户接口返回code=" + code);
+//        }
+//        Boolean hasResult = root.getBoolean("hasResult");
+//        if (hasResult != null && hasResult) {
+//            Object data = root.getString("data");
+//            return data;
+//        }
+        Type type = new TypeReference<SoResponse<SoPageData<CustomerSearchResultItem>>>() {}.getType();
+        SoResponse<SoPageData<CustomerSearchResultItem>> soResp = JSON.parseObject(respBody, type);
+        return soResp;
     }
 
     private String toQueryString(Map<String, Object> params) {
@@ -147,14 +155,7 @@ public class StaticMethodTest {
     }
 
     private Map<String, Object> toMap(Object bean) {
-//        try {
-//            Map<String, String> map = org.apache.commons.beanutils.BeanUtils.describe(bean);
-//            return toQueryString(map);
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
         try {
-//            bean.getClass().getDeclaredMethods()
             Map<String, Object> map = new LinkedHashMap<>();
             PropertyDescriptor[] pds = BeanUtils.getPropertyDescriptors(bean.getClass());
             for (PropertyDescriptor pd : pds) {
